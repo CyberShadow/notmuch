@@ -662,6 +662,21 @@ of the result."
 			  (min init-point (- new-end 1)))))
 	(goto-char new-point)))))
 
+(defun notmuch-search-update-results (results)
+  "Replace results with threads matching RESULTS in-place and redraw them."
+  (let ((pos (next-single-property-change 1 'notmuch-search-result))
+	(results-alist
+	 (mapcar (lambda (result) (cons (plist-get result :thread) result))
+		 results)))
+    (while pos
+      (let* ((prop (get-text-property pos 'notmuch-search-result))
+	     (thread (when prop (plist-get prop :thread)))
+	     (result (when thread (assoc-default thread results-alist))))
+	;; (message "found matching thread: %s" thread)
+	(when result
+	  (notmuch-search-update-result result pos)))
+      (setq pos (next-single-property-change pos 'notmuch-search-result)))))
+
 (defun notmuch-search-process-sentinel (proc msg)
   "Add a message to let user know when \"notmuch search\" exits"
   (let ((buffer (process-buffer proc))

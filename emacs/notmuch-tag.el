@@ -364,6 +364,15 @@ the messages that were tagged"
   :options '(notmuch-hl-line-mode)
   :group 'notmuch-hooks)
 
+(defcustom notmuch-update-search-tags t
+  "Update open `notmuch-search' buffers after tags of a message are modified.
+
+Instantly update any matching results in open `notmuch-search'
+buffers, so that all tag changes are immediately reflected."
+  :type 'boolean
+  :group 'notmuch-search
+  :group 'notmuch-tag)
+
 (defvar notmuch-select-tag-history nil
   "Variable to store minibuffer history for
 `notmuch-select-tag-with-completion' function.")
@@ -477,6 +486,13 @@ notmuch-after-tag-hook will be run."
       (let ((batch-op (concat (mapconcat #'notmuch-hex-encode tag-changes " ")
 			      " -- " query)))
 	(notmuch-call-notmuch-process :stdin-string batch-op "tag" "--batch")))
+    (when notmuch-update-search-tags
+      (let ((results (notmuch-call-notmuch-sexp
+		      "search" "--format=sexp" "--format-version=4" query)))
+	(dolist (buffer (buffer-list))
+	  (when (eq (buffer-local-value 'major-mode buffer) 'notmuch-search-mode)
+	    (with-current-buffer buffer
+	      (notmuch-search-update-results results))))))
     (run-hooks 'notmuch-after-tag-hook)))
 
 (defun notmuch-tag-change-list (tags &optional reverse)
