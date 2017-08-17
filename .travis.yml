@@ -3,6 +3,12 @@ language: c
 dist: trusty
 sudo: false
 
+env:
+  - EMACS_VERSION=24.3
+  - EMACS_VERSION=24.5
+  - EMACS_VERSION=25.1
+  - EMACS_VERSION=snapshot
+
 addons:
   apt:
     packages:
@@ -15,6 +21,12 @@ addons:
     - gpgsm
 
 script:
+  # Configure and install Emacs (according to $EMACS_VERSION)
+  - export PATH="$HOME/bin:$PATH"
+  - wget 'https://raw.githubusercontent.com/flycheck/emacs-travis/master/emacs-travis.mk'
+  - make -f emacs-travis.mk install_emacs
+  - emacs --version
+
   - ./configure
   - make download-test-databases
   - make test
