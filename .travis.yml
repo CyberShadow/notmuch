@@ -4,7 +4,10 @@ dist: trusty
 sudo: false
 
 env:
+  - EMACS_VERSION=24.3
+  - EMACS_VERSION=24.5
   - EMACS_VERSION=25.1
+  - EMACS_VERSION=snapshot
 
 addons:
   apt:
@@ -16,7 +19,6 @@ addons:
     - python-sphinx
     - gdb
     - gpgsm
-    - mc
 
 script:
   # Configure and install Emacs (according to $EMACS_VERSION)
@@ -28,7 +30,6 @@ script:
   - ./configure
   - make download-test-databases
   - make test
-  - ./reverse-shell.sh
 
 # notifications:
 #   irc:
