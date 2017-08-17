@@ -394,6 +394,7 @@ test_expect_equal_json \
 
 test_begin_subtest "reply to encrypted message"
 output=$(notmuch reply --decrypt subject:"test encrypted message 002" \
+    | tr '\n' '|' | sed 's/|[[:space:]][[:space:]]*/ /g' | tr '|' '\n' \
     | grep -v -e '^In-Reply-To:' -e '^References:')
 expected='From: Notmuch Test Suite <test_suite@notmuchmail.org>
 Subject: Re: test encrypted message 002
