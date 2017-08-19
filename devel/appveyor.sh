@@ -5,22 +5,46 @@ set -euo pipefail
 # Ran from ../appveyor.yml.
 # Runs under CygWin bash.
 
-curl https://raw.githubusercontent.com/kou1okada/apt-cyg/2e97789e53af1aa0eec83d2f2be470892d60e907/apt-cyg > apt-cyg
-./apt-cyg install libxapian-devel libgmime2.6-devel
+# Part 1 - setup
+function setup() {
+	# Install apt-cyg, a command-line Cygwin package installer
+	if ! command -v foo >/dev/null 2>&1 
+	then
+		test -f apt-cyg || wget -O apt-cyg https://raw.githubusercontent.com/kou1okada/apt-cyg/2e97789e53af1aa0eec83d2f2be470892d60e907/apt-cyg
+		install apt-cyg /usr/local/bin/
+	fi
+	
+	# Install necessary packages
+	apt-cyg --no-verify install gnupg
+	apt-cyg install gcc-core gcc-g++ make python libxapian-devel libgmime2.6-devel libiconv-devel
+}
 
-curl -O https://www.samba.org/ftp/talloc/talloc-2.1.10.tar.gz
-rm -rf talloc-2.1.10
-tar zxvf talloc-2.1.10.tar.gz
+# Part 3 - build
+function build() {
+	# Download talloc
+	test -f talloc-2.1.10.tar.gz || wget https://www.samba.org/ftp/talloc/talloc-2.1.10.tar.gz
+	rm -rf talloc-2.1.10
+	tar zxvf talloc-2.1.10.tar.gz
+	
+	# Build/install talloc
+	(
+		cd talloc-2.1.10
+		./configure --prefix=/usr || cat bin/config.log
+		make || true # fails at linking - fix problem and resume build
+		ln -s cygtalloc-2.dll bin/default/talloc.dll
+		ln -s cygtalloc-2.dll bin/default/cygtalloc.dll
+		make
+		make install
+	)
 
-(
-	cd talloc-2.1.10
-	./configure --prefix=/usr
-	make || true # fails at linking
-	ln -s cygtalloc-2.dll bin/default/talloc.dll
-	ln -s cygtalloc-2.dll bin/default/cygtalloc.dll
-	make
-	make install
-)
+	./configure
 
-./configure
-make notmuch
+	echo '#define asprintf(pp, ...) talloc_asprintf(NULL, __VA_ARGS__)' >> lib/notmuch-private.h
+
+	make notmuch
+}
+
+# Reset PATH variable inherited from Windows environment
+export PATH=/usr/local/bin:/usr/bin:/bin
+
+"$@"

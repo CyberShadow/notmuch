@@ -1,2 +1,4 @@
 build_script:
-  - C:\cygwin\bin\bash.exe devel/appveyor.sh
+  - C:\cygwin\bin\bash.exe devel/appveyor.sh setup
+  - C:\cygwin\bin\ash.exe /bin/rebaseall
+  - C:\cygwin\bin\bash.exe devel/appveyor.sh build
