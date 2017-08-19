@@ -2156,12 +2156,16 @@ argument, hide all of the messages."
 (defun notmuch-show-next-button ()
   "Advance point to the next button in the buffer."
   (interactive)
-  (forward-button 1))
+  (forward-button 1)
+  (while (invisible-p (point))
+    (forward-button 1)))
 
 (defun notmuch-show-previous-button ()
   "Move point back to the previous button in the buffer."
   (interactive)
-  (backward-button 1))
+  (backward-button 1)
+  (while (invisible-p (point))
+    (backward-button 1)))
 
 (defun notmuch-show-next-thread (&optional show previous)
   "Move to the next item in the search results, if any.
