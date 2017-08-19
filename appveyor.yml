@@ -1,0 +1,2 @@
+build_script:
+  - C:\cygwin\bin\bash.exe devel/appveyor.sh
