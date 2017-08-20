@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+shopt -s lastpipe
 
 # Test script for the AppVeyor CI service.
 # Ran from ../appveyor.yml.
@@ -16,7 +17,7 @@ function setup() {
 	
 	# Install necessary packages
 	apt-cyg --no-verify install gnupg
-	apt-cyg install gcc-core gcc-g++ make python libxapian-devel libgmime2.6-devel libiconv-devel
+	apt-cyg install gcc-core gcc-g++ make python2 libxapian-devel libgmime2.6-devel libiconv-devel
 }
 
 # Part 3 - build
@@ -43,6 +44,13 @@ function build() {
 
 	make notmuch
 }
+
+# Reset environment
+env --null | while read -r -d $'\0' v
+do
+	name=${v/=*}
+	unset "$name" || true # Ignore variable names that are invalid bash identifiers
+done
 
 # Reset PATH variable inherited from Windows environment
 export PATH=/usr/local/bin:/usr/bin:/bin
