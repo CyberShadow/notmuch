@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -xeuo pipefail
 shopt -s lastpipe
 
 # Test script for the AppVeyor CI service.
