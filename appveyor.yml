@@ -2,3 +2,5 @@ build_script:
   - C:\cygwin\bin\bash.exe devel/appveyor.sh setup
   - C:\cygwin\bin\ash.exe /bin/rebaseall
   - C:\cygwin\bin\bash.exe devel/appveyor.sh build
+on_finish:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
