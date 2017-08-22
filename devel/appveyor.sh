@@ -6,21 +6,6 @@ shopt -s lastpipe
 # Ran from ../appveyor.yml.
 # Runs under CygWin bash.
 
-# Part 1 - setup
-function setup() {
-	# Install apt-cyg, a command-line Cygwin package installer
-	if ! command -v foo >/dev/null 2>&1 
-	then
-		test -f apt-cyg || wget -O apt-cyg https://raw.githubusercontent.com/kou1okada/apt-cyg/2e97789e53af1aa0eec83d2f2be470892d60e907/apt-cyg
-		install apt-cyg /usr/local/bin/
-	fi
-	
-	# Install necessary packages
-	apt-cyg --no-verify install gnupg
-	apt-cyg install gcc-core gcc-g++ make python2 libxapian-devel libgmime2.6-devel libiconv-devel
-}
-
-# Part 3 - build
 function build() {
 	# Download talloc
 	test -f talloc-2.1.10.tar.gz || wget https://www.samba.org/ftp/talloc/talloc-2.1.10.tar.gz
@@ -40,9 +25,11 @@ function build() {
 
 	./configure
 
-	echo '#define asprintf(pp, ...) talloc_asprintf(NULL, __VA_ARGS__)' >> lib/notmuch-private.h
+	# Windows PE loader doesn't understand Cygwin symlinks?
+	cp -L /usr/lib/cygtalloc.dll cygtalloc-2.dll
 
-	make notmuch
+	make
+	make test
 }
 
 # Set correct working directory
