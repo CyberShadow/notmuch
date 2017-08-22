@@ -649,60 +649,66 @@ fi
 libdir_in_ldconfig=0
 
 printf "Checking which platform we are on... "
-uname=$(uname)
-if [ $uname = "Darwin" ] ; then
-    printf "Mac OS X.\n"
-    platform=MACOSX
-    linker_resolves_library_dependencies=0
-elif [ $uname = "SunOS" ] ; then
-    printf "Solaris.\n"
-    platform=SOLARIS
-    linker_resolves_library_dependencies=0
-elif [ $uname = "FreeBSD" ] ; then
-    printf "FreeBSD.\n"
-    platform=FREEBSD
-    linker_resolves_library_dependencies=0
-elif [ $uname = "OpenBSD" ] ; then
-    printf "OpenBSD.\n"
-    platform=OPENBSD
-    linker_resolves_library_dependencies=0
-elif [ $uname = "Linux" ] || [ $uname = "GNU" ] ; then
-    printf "%s\n" "$uname"
-    platform="$uname"
-    linker_resolves_library_dependencies=1
+case "$(uname)" in
+    Darwin)
+	printf "Mac OS X.\n"
+	platform=MACOSX
+	linker_resolves_library_dependencies=0
+	;;
+    SunOS)
+	printf "Solaris.\n"
+	platform=SOLARIS
+	linker_resolves_library_dependencies=0
+	;;
+    FreeBSD)
+	printf "FreeBSD.\n"
+	platform=FREEBSD
+	linker_resolves_library_dependencies=0
+	;;
+    OpenBSD)
+	printf "OpenBSD.\n"
+	platform=OPENBSD
+	linker_resolves_library_dependencies=0
+	;;
+    Linux|GNU)
+	printf "%s\n" "$uname"
+	platform="$uname"
+	linker_resolves_library_dependencies=1
 
-    printf "Checking for %s in ldconfig... " "$libdir_expanded"
-    ldconfig_paths=$(/sbin/ldconfig -N -X -v 2>/dev/null | sed -n -e 's,^\(/.*\):\( (.*)\)\?$,\1,p')
-    # Separate ldconfig_paths only on newline (not on any potential
-    # embedded space characters in any filenames). Note, we use a
-    # literal newline in the source here rather than something like:
-    #
-    #	IFS=$(printf '\n')
-    #
-    # because the shell's command substitution deletes any trailing newlines.
-    IFS="
+	printf "Checking for %s in ldconfig... " "$libdir_expanded"
+	ldconfig_paths=$(/sbin/ldconfig -N -X -v 2>/dev/null | sed -n -e 's,^\(/.*\):\( (.*)\)\?$,\1,p')
+	# Separate ldconfig_paths only on newline (not on any potential
+	# embedded space characters in any filenames). Note, we use a
+	# literal newline in the source here rather than something like:
+	#
+	#	IFS=$(printf '\n')
+	#
+	# because the shell's command substitution deletes any trailing newlines.
+	IFS="
 "
-    for path in $ldconfig_paths; do
-	if [ "$path" = "$libdir_expanded" ]; then
-	    libdir_in_ldconfig=1
+	for path in $ldconfig_paths; do
+	    if [ "$path" = "$libdir_expanded" ]; then
+		libdir_in_ldconfig=1
+	    fi
+	done
+	IFS=$DEFAULT_IFS
+	if [ "$libdir_in_ldconfig" = '0' ]; then
+	    printf "No (will set RPATH)\n"
+	else
+	    printf "Yes\n"
 	fi
-    done
-    IFS=$DEFAULT_IFS
-    if [ "$libdir_in_ldconfig" = '0' ]; then
-	printf "No (will set RPATH)\n"
-    else
-	printf "Yes\n"
-    fi
-else
-    printf "Unknown.\n"
-    platform="$uname"
-    linker_resolves_library_dependencies=0
-    cat <<EOF
+	;;
+    *)
+	printf "Unknown.\n"
+	platform="$uname"
+	linker_resolves_library_dependencies=0
+	cat <<EOF
 
 *** Warning: Unknown platform. Notmuch might or might not build correctly.
 
 EOF
-fi
+	;;
+esac
 
 if [ $errors -gt 0 ]; then
     cat <<EOF
