@@ -65,7 +65,7 @@ $(dir)/libnotmuch.a: $(libnotmuch_modules)
 	$(call quiet,AR) rcs $@ $^
 
 $(dir)/$(LIBNAME): $(libnotmuch_modules) util/libnotmuch_util.a parse-time-string/libparse-time-string.a
-	$(call quiet,CXX $(CXXFLAGS)) $(libnotmuch_modules) $(FINAL_LIBNOTMUCH_LDFLAGS) $(LIBRARY_LINK_FLAG) -o $@ util/libnotmuch_util.a parse-time-string/libparse-time-string.a
+	$(call quiet,CXX $(CXXFLAGS)) $(libnotmuch_modules) util/libnotmuch_util.a parse-time-string/libparse-time-string.a $(FINAL_LIBNOTMUCH_LDFLAGS) $(LIBRARY_LINK_FLAG) -o $@
 
 $(dir)/$(SONAME): $(dir)/$(LIBNAME)
 	ln -sf $(LIBNAME) $@
