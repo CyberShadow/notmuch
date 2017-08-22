@@ -48,9 +48,12 @@ test_main_srcs=$(dir)/arg-test.c \
 	      $(dir)/random-corpus.c \
 	      $(dir)/parse-time.c \
 	      $(dir)/smtp-dummy.c \
-	      $(dir)/symbol-test.cc \
 	      $(dir)/make-db-version.cc \
 	      $(dir)/ghost-report.cc
+
+ifneq ($(PLATFORM),CYGWIN)
+test_main_srcs+=$(dir)/symbol-test.cc
+endif
 
 test_srcs=$(test_main_srcs) $(dir)/database-test.c
 
