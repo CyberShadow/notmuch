@@ -5,5 +5,5 @@ build_script:
   - C:\cygwin64\setup-x86_64.exe --quiet-mode --upgrade-also --packages gcc-core,gcc-g++,make,python2,python2-devel,libxapian-devel,libgmime2.6-devel,libiconv-devel,docbook-xsl,libxslt,libxml2,zlib-devel
   # Run our script
   - C:\cygwin64\bin\bash.exe -l %CD%/devel/appveyor.sh build
-on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# on_finish:
+#   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
