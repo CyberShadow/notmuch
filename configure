@@ -699,6 +699,11 @@ case $uname in
 	    printf "Yes\n"
 	fi
 	;;
+    CYGWIN_NT-*)
+	printf "Cygwin.\n"
+	platform=CYGWIN
+	linker_resolves_library_dependencies=0
+	;;
     *)
 	printf "Unknown.\n"
 	platform="$uname"
