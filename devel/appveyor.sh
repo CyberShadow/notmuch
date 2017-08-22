@@ -45,6 +45,9 @@ function build() {
 	make notmuch
 }
 
+# Set correct working directory
+cd "$(dirname "$0")"/..
+
 # Reset environment
 env --null | while read -r -d $'\0' v
 do
