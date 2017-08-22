@@ -246,7 +246,7 @@ notmuch_client_modules = $(notmuch_client_srcs:.c=.o)
 notmuch.o: version.stamp
 
 notmuch: $(notmuch_client_modules) lib/libnotmuch.a util/libnotmuch_util.a parse-time-string/libparse-time-string.a
-	$(call quiet,CXX $(CFLAGS)) $^ $(FINAL_LIBNOTMUCH_LDFLAGS) -o $@
+	$(call quiet,CXX $(CFLAGS)) $^ $(FINAL_LIBNOTMUCH_LDFLAGS) $(CONFIGURE_LDFLAGS) -o $@
 
 notmuch-shared: $(notmuch_client_modules) lib/$(LINKER_NAME)
 	$(call quiet,$(FINAL_NOTMUCH_LINKER) $(CFLAGS)) $(notmuch_client_modules) $(FINAL_NOTMUCH_LDFLAGS) -o $@
