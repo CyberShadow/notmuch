@@ -30,7 +30,7 @@ function build() {
 	# Build/install talloc
 	(
 		cd talloc-2.1.10
-		./configure --prefix=/usr || cat bin/config.log
+		./configure --prefix=/usr --disable-python
 		make || true # fails at linking - fix problem and resume build
 		ln -s cygtalloc-2.dll bin/default/talloc.dll
 		ln -s cygtalloc-2.dll bin/default/cygtalloc.dll
