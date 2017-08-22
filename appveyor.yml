@@ -1,6 +1,6 @@
 build_script:
   # Update the CygWin installer
-  - wget -O C:\cygwin64\setup-x86_64.exe https://cygwin.com/setup-x86_64.exe
+  - C:\cygwin64\bin\bash.exe -c "wget -O /cygdrive/c/cygwin64/setup-x86_64.exe https://cygwin.com/setup-x86_64.exe"
   # Update all packages and install dependencies
   - C:\cygwin64\setup-x86_64.exe --quiet-mode --upgrade-also --packages gcc-core,gcc-g++,make,python2,python2-devel,libxapian-devel,libgmime2.6-devel,libiconv-devel,docbook-xsl,libxslt,libxml2
   # Run our script
