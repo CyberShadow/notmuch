@@ -48,11 +48,19 @@ GPG_FILE=$(SHA256_FILE).asc
 
 PV_FILE=bindings/python/notmuch/version.py
 
+# Cygwin's linker prefers .a files over shared objects, so indicate
+# that we want to link against the shared library explicitly.
+ifeq ($(PLATFORM),CYGWIN)
+NOTMUCH_LIBRARY_FLAG=-l:libnotmuch.so
+else
+NOTMUCH_LIBRARY_FLAG=-lnotmuch
+endif
+
 # Smash together user's values with our extra values
 STD_CFLAGS := -std=gnu99
 FINAL_CFLAGS = -DNOTMUCH_VERSION=$(VERSION) $(CPPFLAGS) $(STD_CFLAGS) $(CFLAGS) $(WARN_CFLAGS) $(extra_cflags) $(CONFIGURE_CFLAGS)
 FINAL_CXXFLAGS = $(CPPFLAGS) $(CXXFLAGS) $(WARN_CXXFLAGS) $(extra_cflags) $(extra_cxxflags) $(CONFIGURE_CXXFLAGS)
-FINAL_NOTMUCH_LDFLAGS = $(LDFLAGS) -Lutil -lnotmuch_util -Llib -lnotmuch
+FINAL_NOTMUCH_LDFLAGS = $(LDFLAGS) -Lutil -lnotmuch_util -Llib $(NOTMUCH_LIBRARY_FLAG)
 ifeq ($(LIBDIR_IN_LDCONFIG),0)
 FINAL_NOTMUCH_LDFLAGS += $(RPATH_LDFLAGS)
 endif
