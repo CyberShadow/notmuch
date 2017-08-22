@@ -755,7 +755,7 @@ count_files (const char *path, int *count, add_files_state_t *state)
 	    continue;
 	}
 
-	if (asprintf (&next, "%s/%s", path, entry->d_name) == -1) {
+	if (talloc_asprintf (&next, "%s/%s", path, entry->d_name) == -1) {
 	    next = NULL;
 	    fprintf (stderr, "Error descending from %s to %s: Out of memory\n",
 		     path, entry->d_name);
@@ -773,7 +773,7 @@ count_files (const char *path, int *count, add_files_state_t *state)
 	    count_files (next, count, state);
 	}
 
-	free (next);
+	talloc_free (next);
     }
 
   DONE:
