@@ -21,6 +21,8 @@
 #ifndef NOTMUCH_DATABASE_PRIVATE_H
 #define NOTMUCH_DATABASE_PRIVATE_H
 
+#include "notmuch-private.h"
+
 /* According to WG14/N1124, a C++ implementation won't provide us a
  * macro like PRIx64 (which gives a printf format string for
  * formatting a uint64_t as hexadecimal) unless we define
@@ -29,8 +31,6 @@
  */
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
-
-#include "notmuch-private.h"
 
 #ifdef SILENCE_XAPIAN_DEPRECATION_WARNINGS
 #define XAPIAN_DEPRECATED(D) D
